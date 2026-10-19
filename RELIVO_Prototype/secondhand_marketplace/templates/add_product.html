@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}Tambah Produk — RELIVO<script>
+(() => {
+ const input = document.getElementById('productImage');
+ const button = document.getElementById('analyzeImageButton');
+ const result = document.getElementById('aiResult');
+ const preview = document.getElementById('imagePreview');
+ const wrap = document.getElementById('imagePreviewWrap');
+ input.addEventListener('change', () => {
+   const file = input.files && input.files[0];
+   result.textContent = file ? 'Foto dipilih. Tekan tombol untuk memulai analisis AI.' : 'Pilih foto, lalu jalankan analisis.';
+   if (file) { preview.src = URL.createObjectURL(file); wrap.hidden = false; }
+   else { wrap.hidden = true; preview.removeAttribute('src'); }
+ });
+ button.addEventListener('click', async () => {
+   const file = input.files && input.files[0];
+   if (!file) { result.textContent = 'Pilih foto produk terlebih dahulu.'; input.focus(); return; }
+   if (file.size > 8 * 1024 * 1024) { result.textContent = 'Ukuran foto maksimal 8 MB.'; return; }
+   button.disabled = true; button.textContent = 'Menganalisis foto…'; result.textContent = 'Mengirim foto ke layanan analisis AI…';
+   const data = new FormData(); data.append('image', file);
+   try {
+     const response = await fetch('{{ url_for("analyze_image") }}', {method:'POST', body:data});
+     const payload = await response.json();
+     result.textContent = payload.ok ? payload.analysis + '\n\nCatatan: ' + payload.notice : payload.message || 'Analisis gagal.';
+   } catch (error) { result.textContent = 'Tidak dapat terhubung ke server. Pastikan aplikasi berjalan dan coba lagi.'; }
+   finally { button.disabled = false; button.textContent = 'Analisis foto dengan AI'; }
+ });
+})();
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="form-wrap">
+    <div class="page-title">
+        <div class="eyebrow">UNTUK PENJUAL</div>
+        <h1>Tambah Produk</h1>
+        <p>Masukkan informasi barang bekas yang ingin kamu jual.</p>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="product-form">
+        <label>Nama produk
+            <input name="name" required placeholder="Contoh: Hoodie Hitam Uniqlo">
+        </label>
+
+        <div class="two-col">
+            <label>Kategori
+                <select name="category" required>
+                    <option value="">Pilih kategori</option>
+                    {% for c in categories %}
+                    <option value="{{ c }}">{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+
+            <label>Kondisi
+                <select name="condition" required>
+                    <option value="">Pilih kondisi</option>
+                    {% for c in conditions %}
+                    <option value="{{ c }}">{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+
+        <label>Harga (Rupiah)
+            <input type="number" name="price" min="0" required placeholder="150000">
+        </label>
+
+        <label>Foto produk
+            <input id="productImage" type="file" name="image" accept=".jpg,.jpeg,.png,.webp" required>
+            <small>Format: JPG, JPEG, PNG, WEBP. Maksimal 8 MB.</small>
+        </label>
+        <div class="ai-panel" aria-live="polite">
+            <div class="ai-panel-head"><strong>✦ RELIVO AI Visual Check</strong><span class="ai-tag">Beta</span></div>
+            <p>Analisis visual untuk membantu mengenali jenis barang dan kondisi yang tampak pada foto. AI tidak dapat memastikan fungsi barang atau menggantikan pemeriksaan penjual.</p>
+            <button type="button" class="secondary-button ai-button" id="analyzeImageButton">Analisis foto dengan AI</button>
+            <div id="imagePreviewWrap" hidden><img id="imagePreview" alt="Pratinjau foto produk"></div>
+            <div id="aiResult" class="ai-result" role="status">Pilih foto, lalu jalankan analisis.</div>
+        </label>
+
+        <label>Deskripsi
+            <textarea name="description" rows="5" placeholder="Jelaskan kondisi, kelengkapan, dan kekurangan barang..."></textarea>
+        </label>
+
+        <div class="validation-box">
+            <strong>✓ Validasi kelayakan otomatis</strong>
+            <p>Kondisi <b>Seperti Baru, Baik,</b> dan <b>Cukup</b> akan ditampilkan. Kondisi <b>Rusak</b> akan disimpan tetapi tidak ditampilkan di marketplace.</p>
+        </div>
+
+        <button class="primary-button full" type="submit">Tambahkan Produk</button>
+    </form>
+</div>
+<script>
+(() => {
+ const input = document.getElementById('productImage');
+ const button = document.getElementById('analyzeImageButton');
+ const result = document.getElementById('aiResult');
+ const preview = document.getElementById('imagePreview');
+ const wrap = document.getElementById('imagePreviewWrap');
+ input.addEventListener('change', () => {
+   const file = input.files && input.files[0];
+   result.textContent = file ? 'Foto dipilih. Tekan tombol untuk memulai analisis AI.' : 'Pilih foto, lalu jalankan analisis.';
+   if (file) { preview.src = URL.createObjectURL(file); wrap.hidden = false; }
+   else { wrap.hidden = true; preview.removeAttribute('src'); }
+ });
+ button.addEventListener('click', async () => {
+   const file = input.files && input.files[0];
+   if (!file) { result.textContent = 'Pilih foto produk terlebih dahulu.'; input.focus(); return; }
+   if (file.size > 8 * 1024 * 1024) { result.textContent = 'Ukuran foto maksimal 8 MB.'; return; }
+   button.disabled = true; button.textContent = 'Menganalisis foto…'; result.textContent = 'Mengirim foto ke layanan analisis AI…';
+   const data = new FormData(); data.append('image', file);
+   try {
+     const response = await fetch('{{ url_for("analyze_image") }}', {method:'POST', body:data});
+     const payload = await response.json();
+     result.textContent = payload.ok ? payload.analysis + '\n\nCatatan: ' + payload.notice : payload.message || 'Analisis gagal.';
+   } catch (error) { result.textContent = 'Tidak dapat terhubung ke server. Pastikan aplikasi berjalan dan coba lagi.'; }
+   finally { button.disabled = false; button.textContent = 'Analisis foto dengan AI'; }
+ });
+})();
+</script>
+{% endblock %}

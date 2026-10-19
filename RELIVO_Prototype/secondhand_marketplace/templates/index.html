@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Marketplace — RELIVO{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div>
+        <div class="eyebrow">SECONDHAND MARKETPLACE</div>
+        <h1>Barang lama,<br><span>nilai baru.</span></h1>
+        <p>Temukan barang bekas layak pakai dari penjual di sekitar marketplace kami.</p>
+        <a href="{{ url_for('add_product') }}" class="primary-button">Jual Barang Bekas →</a>
+    </div>
+    <div class="hero-card">
+        <div class="hero-icon">♻</div>
+        <strong>Belanja lebih bijak</strong>
+        <small>Kurangi barang terbuang dengan memperpanjang masa pakainya.</small>
+    </div>
+</section>
+
+<section class="filter-panel">
+    <form method="GET">
+        <div class="search-row">
+            <input name="search" value="{{ search }}" placeholder="Cari produk...">
+            <select name="category">
+                <option value="">Semua kategori</option>
+                {% for c in categories %}
+                    <option value="{{ c }}" {% if selected_category == c %}selected{% endif %}>{{ c }}</option>
+                {% endfor %}
+            </select>
+            <select name="condition">
+                <option value="">Semua kondisi layak</option>
+                {% for c in conditions %}
+                    <option value="{{ c }}" {% if selected_condition == c %}selected{% endif %}>{{ c }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="price-row">
+            <input type="number" name="min_price" value="{{ min_price }}" placeholder="Harga minimum">
+            <input type="number" name="max_price" value="{{ max_price }}" placeholder="Harga maksimum">
+            <button class="secondary-button" type="submit">🔎 Cari & Filter</button>
+            <a class="reset" href="{{ url_for('index') }}">Reset</a>
+        </div>
+    </form>
+</section>
+
+<div class="section-heading">
+    <div>
+        <h2>Produk pilihan</h2>
+        <p>{{ products|length }} produk ditemukan</p>
+    </div>
+    <span class="status-pill">✓ Produk layak tampil</span>
+</div>
+
+{% if products %}
+<div class="product-grid">
+    {% for product in products %}
+    <a href="{{ url_for('product_detail', product_id=product['id']) }}" class="product-card">
+        <div class="product-image">
+            {% if product['image'] %}
+                <img src="{{ url_for('static', filename='uploads/' + product['image']) }}" alt="{{ product['name'] }}">
+            {% else %}
+                <div class="placeholder">♧</div>
+            {% endif %}
+            <span class="condition-badge">{{ product['condition'] }}</span>
+        </div>
+        <div class="product-info">
+            <small>{{ product['category'] }}</small>
+            <h3>{{ product['name'] }}</h3>
+            <strong>{{ product['price']|rupiah }}</strong>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty">
+    <div>⌕</div>
+    <h3>Produk tidak ditemukan</h3>
+    <p>Coba ubah kata kunci atau filter pencarian.</p>
+</div>
+{% endif %}
+{% endblock %}

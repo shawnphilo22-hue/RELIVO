@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#247a55">
+    <meta name="description" content="RELIVO — Good Things Live On. Marketplace barang bekas layak pakai.">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <title>{% block title %}RELIVO — Good Things Live On{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<nav class="navbar">
+    <div class="container nav-inner">
+        <a class="brand" href="{{ url_for('index') }}">RELI<span>VO</span></a>
+        <div class="nav-links">
+            <button type="button" class="fullscreen-button" id="fullscreenToggle" aria-label="Aktifkan layar penuh">⛶ Layar penuh</button>
+            <a href="{{ url_for('index') }}">Marketplace</a>
+            <a href="{{ url_for('add_product') }}" class="nav-button">+ Jual Barang</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+</main>
+
+<footer>
+    <div class="container">
+        <strong>RELIVO Market</strong>
+        <span>Marketplace barang bekas layak pakai — Prototype Sistem Informasi</span>
+    </div>
+</footer>
+<script>
+(() => {
+ const button = document.getElementById('fullscreenToggle');
+ if (!button) return;
+ button.addEventListener('click', async () => {
+   try {
+     if (!document.fullscreenElement) await document.documentElement.requestFullscreen();
+     else await document.exitFullscreen();
+   } catch (e) { alert('Mode layar penuh tidak didukung di browser ini.'); }
+ });
+ document.addEventListener('fullscreenchange', () => {
+   button.textContent = document.fullscreenElement ? '⛶ Keluar layar penuh' : '⛶ Layar penuh';
+ });
+})();
+if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/static/sw.js').catch(()=>{}));
+</script>
+</body>
+</html>

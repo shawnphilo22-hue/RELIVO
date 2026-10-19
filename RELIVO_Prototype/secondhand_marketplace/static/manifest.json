@@ -1,0 +1,10 @@
+{
+  "name": "RELIVO — Good Things Live On",
+  "short_name": "RELIVO",
+  "description": "Marketplace barang bekas layak pakai",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f8f6",
+  "theme_color": "#247a55",
+  "icons": []
+}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{ product['name'] }} — RELIVO{% endblock %}
+
+{% block content %}
+<div class="detail">
+    <a href="{{ url_for('index') }}" class="back">← Kembali ke marketplace</a>
+
+    <div class="detail-grid">
+        <div class="detail-image">
+            {% if product['image'] %}
+                <img src="{{ url_for('static', filename='uploads/' + product['image']) }}" alt="{{ product['name'] }}">
+            {% else %}
+                <div class="placeholder large">♧</div>
+            {% endif %}
+        </div>
+
+        <div class="detail-info">
+            <span class="category-label">{{ product['category'] }}</span>
+            <h1>{{ product['name'] }}</h1>
+            <div class="detail-price">{{ product['price']|rupiah }}</div>
+
+            <div class="info-row">
+                <span>Kondisi</span>
+                <strong>{{ product['condition'] }}</strong>
+            </div>
+            <div class="info-row">
+                <span>Status kelayakan</span>
+                {% if product['eligible'] %}
+                    <strong class="good">✓ Layak ditampilkan</strong>
+                {% else %}
+                    <strong class="bad">✕ Tidak layak ditampilkan</strong>
+                {% endif %}
+            </div>
+
+            <hr>
+            <h3>Deskripsi</h3>
+            <p class="description">{{ product['description'] or 'Tidak ada deskripsi.' }}</p>
+
+            {% if product['eligible'] %}
+                <button class="primary-button full" onclick="alert('Prototype: fitur pembelian dapat diintegrasikan pada tahap berikutnya.')">Beli / Hubungi Penjual</button>
+            {% else %}
+                <div class="not-eligible">Produk ini tidak memenuhi kriteria untuk ditampilkan di marketplace.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
